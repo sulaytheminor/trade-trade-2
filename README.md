@@ -45,10 +45,24 @@ they behave the way the spec describes:
 ## Setup
 
 ```bash
+rm -f package-lock.json   # if you have an old one from before this fix
 npm install
 npm run build
 npm run dev   # local dev
 ```
+
+`react`, `react-dom`, `@types/react`, and `@types/react-dom` are pinned
+to exact React 18 versions, and `package.json` has an `overrides` block
+forcing every nested dependency (including the Solana wallet-adapter
+packages) onto those same exact versions. This is what actually fixes
+Netlify "type incompatibility" build errors in `WalletContextProvider.tsx`
+— without it, npm can hoist a second, newer copy of `@types/react`
+somewhere in the tree, and `ReactNode`/`children` types stop lining up
+between that copy and the one Next.js is using, even though the
+top-level `devDependencies` entry already says 18.x. If you had an old
+`package-lock.json` committed, delete it and let npm regenerate one
+from this `package.json` — a stale lockfile can keep the old,
+mismatched resolution around even after `package.json` is fixed.
 
 Deploy to Netlify with the included `netlify.toml`
 (`@netlify/plugin-nextjs`). No environment variables are required for

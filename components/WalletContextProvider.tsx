@@ -1,13 +1,17 @@
 "use client";
 
-import { FC, ReactNode, useMemo } from "react";
+import { ReactNode, useMemo } from "react";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { useAppStore } from "@/store/useAppStore";
 import "@solana/wallet-adapter-react-ui/styles.css";
 
-export const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+interface WalletContextProviderProps {
+  children: ReactNode;
+}
+
+export function WalletContextProvider({ children }: WalletContextProviderProps) {
   const rpcEndpoint = useAppStore((s) => s.settings.rpcEndpoint);
 
   // Only official, audited wallet-adapter packages. Phantom and
@@ -27,4 +31,4 @@ export const WalletContextProvider: FC<{ children: ReactNode }> = ({ children })
       </WalletProvider>
     </ConnectionProvider>
   );
-};
+}
